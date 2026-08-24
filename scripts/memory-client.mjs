@@ -19,7 +19,7 @@ export function readConfig(env) {
     throw new Error('Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in the local environment.');
   }
 
-  if (env.SUPABASE_SERVICE_ROLE_KEY || /service_role|sb_secret_/i.test(publishableKey)) {
+  if (env.SUPABASE_SERVICE_ROLE_KEY || isServiceRoleKey(publishableKey)) {
     throw new Error('A service-role or secret key is not accepted by this client.');
   }
 
@@ -35,6 +35,21 @@ export function readConfig(env) {
   }
 
   return { url, publishableKey };
+}
+
+function isServiceRoleKey(key) {
+  if (/service_role|sb_secret_/i.test(key)) return true;
+
+  // Legacy anon/service-role keys are JWTs. Inspect only the local payload
+  // claim; the key is never printed, persisted, or sent to Supabase here.
+  const parts = key.split('.');
+  if (parts.length !== 3) return false;
+  try {
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+    return payload?.role === 'service_role';
+  } catch {
+    return false;
+  }
 }
 
 export function summarizeExport(exportData) {
