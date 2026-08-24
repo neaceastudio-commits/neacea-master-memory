@@ -1,4 +1,4 @@
-# Memory Protocol V0.1
+# Memory Protocol V0.3
 
 ## Regola base
 
@@ -50,9 +50,25 @@ Conversazione / voce
 - `original_text` viene salvato una sola volta e non può essere sovrascritto.
 - Titolo, testo strutturato, dati strutturati, stato e sensibilità vivono in `journal_entry_revisions`; una correzione crea una nuova revisione.
 - Le classificazioni sono multiple e versionate con la revisione: `EVENT`, `DECISION`, `PAYMENT`, `IDEA`, `PROBLEM`, `IMPRESSION`, `NEXT_ACTION`.
-- `project_reference` è un riferimento testuale opzionale: V0.2 non introduce ancora un dominio progetti separato.
+- `project_reference` resta compatibile con lo storico Journal; V0.3 aggiunge il dominio `projects` con relazioni UUID tipizzate.
 - Una relazione `journal_memory_links` permette di passare in entrambi i sensi tra Journal e Master Memory. Il testo non viene copiato nella memoria.
 - `GENERATED` indica che l'entry ha prodotto una memoria; `REFERENCED` indica un collegamento contestuale.
+
+## Journal, Memory, Project, Timeline e Source
+
+- **Journal** è ciò che è stato raccontato o registrato in uno specifico momento. L'originale è immutabile; la classificazione vive nelle revisioni.
+- **Memory** è conoscenza consolidata, con versioni, stato, validità e fonte.
+- **Project** è un contenitore organizzativo con stato (`PLANNED`, `ACTIVE`, `PAUSED`, `COMPLETED`, `ARCHIVED`), date e metadati.
+- **Timeline** è la cronologia di un Project. Ogni evento punta a Journal, Memory, pagamento, Source/documento o milestone tramite relazione, senza duplicare il contenuto.
+- **Source** è la provenienza: conversazione, documento, inserimento manuale, sistema/applicazione o importazione.
+
+## Project e cronologia
+
+Le modifiche importanti al progetto passano dalla RPC `transition_project_status` e producono sempre una riga in `project_status_history`; la situazione precedente non viene cancellata. Gli eventi della timeline sono append-only e possono rappresentare decisioni tramite un memory item di tipo `DECISION`.
+
+Il modello è pronto per ricostruire in futuro la storia di NEACEA STUDIO attraverso le fasi `IDEA`, `DESIGN`, `FINANCING`, `LOCATION_RESEARCH`, `WORKS`, `AUTHORIZATIONS`, `EQUIPMENT_PURCHASE`, `FIT_OUT`, `OPENING`, `OPERATIONS` ed `EVOLUTION`. Queste sono solo fasi dello schema: non esiste ancora alcun progetto o dato reale.
+
+I pagamenti sono record futuri con fonte obbligatoria, progetto opzionale e relazione separata `journal_payment_links` verso Journal. `project_sources` collega un Project a un Source/documento senza trasformare V0.3 in un document management system.
 
 ## Cancellazione
 
@@ -62,6 +78,6 @@ Conversazione / voce
 
 ## Esportazione
 
-- JSON: `master_memory.export_master_memory_json` esporta memory item, versioni, fonti, intake record, Journal, revisioni, classificazioni e relazioni. Il flag per `HIGHLY_SENSITIVE` resta esplicito.
-- Markdown: `master_memory.export_master_memory_markdown` produce una rappresentazione leggibile delle stesse informazioni fondamentali, incluse fonti e relazioni.
+- JSON: `master_memory.export_master_memory_json` esporta memory item, versioni, fonti, intake record, Journal, revisioni, classificazioni, Projects, storico stati, timeline, pagamenti e relazioni. Il flag per `HIGHLY_SENSITIVE` resta esplicito.
+- Markdown: `master_memory.export_master_memory_markdown` produce una rappresentazione leggibile delle stesse informazioni fondamentali, includendo Projects, timeline, pagamenti e Source.
 - SQL/database: le migration Git sono lo schema portabile; un dump logico autorizzato del progetto completa l'esportazione dei dati quando sarà richiesto.

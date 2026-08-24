@@ -70,6 +70,43 @@ export type JournalEntryClassification = (typeof journalEntryClassifications)[nu
 export const journalMemoryLinkTypes = ['GENERATED', 'REFERENCED'] as const;
 export type JournalMemoryLinkType = (typeof journalMemoryLinkTypes)[number];
 
+export const projectStatuses = [
+  'PLANNED',
+  'ACTIVE',
+  'PAUSED',
+  'COMPLETED',
+  'ARCHIVED',
+] as const;
+export type ProjectStatus = (typeof projectStatuses)[number];
+
+export const projectPhases = [
+  'IDEA',
+  'DESIGN',
+  'FINANCING',
+  'LOCATION_RESEARCH',
+  'WORKS',
+  'AUTHORIZATIONS',
+  'EQUIPMENT_PURCHASE',
+  'FIT_OUT',
+  'OPENING',
+  'OPERATIONS',
+  'EVOLUTION',
+] as const;
+export type ProjectPhase = (typeof projectPhases)[number];
+
+export const projectTimelineEventTypes = [
+  'JOURNAL_ENTRY',
+  'MEMORY_ITEM',
+  'DECISION',
+  'PAYMENT',
+  'DOCUMENT',
+  'MILESTONE',
+] as const;
+export type ProjectTimelineEventType = (typeof projectTimelineEventTypes)[number];
+
+export const projectPaymentLinkTypes = ['RECORDED', 'REFERENCED'] as const;
+export type ProjectPaymentLinkType = (typeof projectPaymentLinkTypes)[number];
+
 export type JsonObject = Record<string, unknown>;
 
 export interface MemorySourceRow {
@@ -198,4 +235,83 @@ export interface JournalSearchResult {
   project_reference: string | null;
   classifications: JournalEntryClassification[];
   updated_at: string;
+}
+
+export interface ProjectRow {
+  id: string;
+  owner_id: string;
+  name: string;
+  description: string | null;
+  project_type: string;
+  status: ProjectStatus;
+  sensitivity: SensitivityLevel;
+  start_date: string | null;
+  end_date: string | null;
+  metadata: JsonObject;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectStatusHistoryRow {
+  id: string;
+  project_id: string;
+  previous_status: ProjectStatus | null;
+  new_status: ProjectStatus;
+  changed_at: string;
+  changed_by: string;
+  reason: string | null;
+  source_id: string | null;
+  metadata: JsonObject;
+}
+
+export interface ProjectPaymentRow {
+  id: string;
+  owner_id: string;
+  project_id: string | null;
+  payment_date: string;
+  amount: number;
+  currency: string;
+  description: string;
+  category: string;
+  supplier: string | null;
+  source_id: string;
+  sensitivity: SensitivityLevel;
+  metadata: JsonObject;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectTimelineEntryRow {
+  id: string;
+  project_id: string;
+  owner_id: string;
+  occurred_at: string;
+  event_type: ProjectTimelineEventType;
+  title: string | null;
+  description: string | null;
+  phase: ProjectPhase | null;
+  journal_entry_id: string | null;
+  memory_id: string | null;
+  payment_id: string | null;
+  source_id: string | null;
+  milestone_key: string | null;
+  metadata: JsonObject;
+  created_at: string;
+}
+
+export interface JournalPaymentLinkRow {
+  id: string;
+  journal_entry_id: string;
+  payment_id: string;
+  link_type: ProjectPaymentLinkType;
+  created_at: string;
+}
+
+export interface ProjectSourceRow {
+  id: string;
+  project_id: string;
+  source_id: string;
+  source_role: string;
+  metadata: JsonObject;
+  created_at: string;
 }
