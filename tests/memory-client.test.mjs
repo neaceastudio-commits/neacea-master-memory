@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readConfig, summarizeExport, validateCliArgs } from '../scripts/memory-client.mjs';
+import { readConfig, summarizeExport, validateCliArgs, validateOtp } from '../scripts/memory-client.mjs';
 
 test('rejects command-line arguments so OTP cannot be supplied through shell history', () => {
   assert.throws(() => validateCliArgs(['123456']), /no command-line arguments/);
@@ -26,4 +26,13 @@ test('accepts only URL and publishable key configuration', () => {
 test('summarizes an empty export without exposing record contents', () => {
   assert.deepEqual(summarizeExport({ memory_items: [] }), { memoryItems: 0 });
   assert.throws(() => summarizeExport({ memory_items: 'not-an-array' }), /memory_items/);
+});
+
+test('accepts Supabase OTP lengths from 6 through 10 digits', () => {
+  validateOtp('123456');
+  validateOtp('12345678');
+  validateOtp('1234567890');
+  assert.throws(() => validateOtp('12345'), /6- to 10-digit/);
+  assert.throws(() => validateOtp('12345678901'), /6- to 10-digit/);
+  assert.throws(() => validateOtp('1234ab78'), /6- to 10-digit/);
 });

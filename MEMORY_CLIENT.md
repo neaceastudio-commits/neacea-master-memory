@@ -27,7 +27,7 @@ pnpm install
 pnpm run memory:auth
 ```
 
-Il CLI chiede email e OTP interattivamente. Non accetta OTP o token come argomenti, non stampa credenziali e configura `persistSession: false`, quindi access token e refresh token restano solo nella memoria del processo.
+Il CLI chiede email e OTP interattivamente. Accetta il formato OTP Supabase da 6 a 10 cifre (quindi anche il codice a 8 cifre configurato in alcuni progetti). Non accetta OTP o token come argomenti, non stampa credenziali e configura `persistSession: false`, quindi access token e refresh token restano solo nella memoria del processo.
 
 Il test autenticato chiama `export_master_memory_json(false)` tramite il client con schema `master_memory`. La RPC controlla `auth.uid()`; una sessione mancante produce errore. Con database vuoto l’output atteso è:
 

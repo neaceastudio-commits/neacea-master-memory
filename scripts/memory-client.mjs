@@ -65,6 +65,12 @@ export function summarizeExport(exportData) {
   return { memoryItems: memoryItems.length };
 }
 
+export function validateOtp(otp) {
+  if (!/^\d{6,10}$/.test(otp)) {
+    throw new Error('The OTP must be a 6- to 10-digit code.');
+  }
+}
+
 function safeError(context, error) {
   const code = error?.code ? ` (${error.code})` : '';
   return new Error(`${context} failed${code}.`);
@@ -95,7 +101,7 @@ async function run() {
     if (otpRequestError) throw safeError('OTP request', otpRequestError);
 
     const otp = (await readline.question('OTP (input locally, never passed as an argument): ')).trim();
-    if (!/^\d{6}$/.test(otp)) throw new Error('The OTP must be a six-digit code.');
+    validateOtp(otp);
 
     const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
