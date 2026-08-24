@@ -59,3 +59,7 @@ Il tipo di progetto resta flessibile. Il modello supporta già le fasi future `I
 ## Operatività
 
 Le migration sono la fonte di verità dello schema. Gli export completi sono disponibili tramite `export_master_memory_json` e `export_master_memory_markdown`; `HIGHLY_SENSITIVE` richiede sempre il flag esplicito. Non inserire nel repository password, service-role key, token o URL con credenziali. Per il comportamento operativo leggere [MEMORY_PROTOCOL.md](MEMORY_PROTOCOL.md) e [BACKUP_E_RIPRISTINO.md](BACKUP_E_RIPRISTINO.md).
+
+## Import V1 — staging
+
+L'importazione storica segue sempre il percorso `ChatGPT Memory → staging → review → validation → Supabase`. Il formato controllato è descritto in [IMPORT_V1_STAGING.md](IMPORT_V1_STAGING.md), con schema in [staging/import-v1.schema.json](staging/import-v1.schema.json), template vuoto in [staging/import-v1.template.json](staging/import-v1.template.json) e validator locale `scripts/validate_import_v1.py`. Il dataset reale deve essere fornito come `staging/import-v1.json`; il file è ignorato da Git e questa V0 non effettua alcuna scrittura su Supabase.

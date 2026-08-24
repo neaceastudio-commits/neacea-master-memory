@@ -1,0 +1,8 @@
+# Real import datasets are local staging material and must never be committed.
+staging/*.json
+!staging/import-v1.schema.json
+!staging/import-v1.template.json
+
+# Python test/runtime artifacts.
+__pycache__/
+*.py[cod]

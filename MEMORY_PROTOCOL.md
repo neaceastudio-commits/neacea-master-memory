@@ -76,6 +76,12 @@ I pagamenti sono record futuri con fonte obbligatoria, progetto opzionale e rela
 - L'operazione normale è `ARCHIVED`, tramite una nuova versione o un flusso esplicito futuro.
 - Una cancellazione fisica richiede una procedura separata, autorizzazione esplicita, backup verificato, valutazione degli impatti e una nuova migration revisionata. Non deve essere usata come alternativa al versionamento.
 
+## Import storico V1
+
+Le informazioni storiche che ChatGPT prepara non entrano direttamente in Supabase. Devono essere consegnate nel contenitore JSON `staging/import-v1.json`, validate localmente e sottoposte a review. Ogni candidato porta con sé `import_action`: `IMPORT`, `REVIEW`, `SKIP` o `SUPERSEDE`. Il validator rifiuta `HIGHLY_SENSITIVE`, credenziali e valori incompatibili con il modello; nessuna azione del validator scrive nel database.
+
+Il passaggio successivo all'Import V1 sarà definito solo dopo la review del dataset: la classificazione `REVIEW` non diventa memoria, `SKIP` non viene importato, `SUPERSEDE` deve indicare il candidato precedente e una decisione consolidata deve rimanere distinta dai fatti e dalle idee.
+
 ## Esportazione
 
 - JSON: `master_memory.export_master_memory_json` esporta memory item, versioni, fonti, intake record, Journal, revisioni, classificazioni, Projects, storico stati, timeline, pagamenti e relazioni. Il flag per `HIGHLY_SENSITIVE` resta esplicito.
