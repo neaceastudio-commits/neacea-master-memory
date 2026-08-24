@@ -1,0 +1,13 @@
+{
+  "name": "neacea-master-memory-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "memory:auth": "node scripts/memory-client.mjs",
+    "test:memory-client": "node --test tests/memory-client.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.112.4"
+  }
+}

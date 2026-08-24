@@ -6,3 +6,12 @@ staging/*.json
 # Python test/runtime artifacts.
 __pycache__/
 *.py[cod]
+
+# Local Auth configuration/session material. Never commit credentials or tokens.
+.env
+.env.*
+!.env.example
+*.session
+
+# Node package installation artifacts.
+node_modules/
