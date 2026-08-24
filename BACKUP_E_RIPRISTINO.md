@@ -5,21 +5,22 @@
 - Le migration in `supabase/migrations/` sono la fonte di verità dello schema e devono essere versionate con Git.
 - I dati operativi restano nel progetto Supabase dedicato `neacea-master-memory`; non vengono copiati in altri repository NEACEA.
 - Nessuna chiave, password, connection string o export contenente dati personali viene salvato nel repository.
-- Gli export di dati sono operazioni deliberate: la funzione `master_memory.export_memory_json(false)` esclude `HIGHLY_SENSITIVE` per impostazione predefinita.
+- Gli export di dati sono operazioni deliberate: le funzioni `master_memory.export_master_memory_json(false)` e `master_memory.export_master_memory_markdown(false)` escludono `HIGHLY_SENSITIVE` per impostazione predefinita.
 
 ## Backup
 
 1. Verificare nel dashboard Supabase del progetto dedicato che i backup gestiti siano attivi e compatibili con gli obiettivi di conservazione desiderati.
 2. Conservare il repository Git con la history completa delle migration, incluso il commit che le ha applicate.
-3. Per un export logico dei contenuti, eseguire una procedura autenticata che richiami l'export JSON e salvarne l'output solo in un archivio cifrato autorizzato.
-4. L'export Markdown futuro deriva dallo stesso set di record JSON: ogni record deve includere identificativo, versione, stato, sensibilità, fonte e contenuto. Non è previsto alcun export automatico.
+3. Per un export logico completo, eseguire una procedura autenticata che richiami l'export JSON e salvarne l'output solo in un archivio cifrato autorizzato. Include Journal, revisioni e relazioni.
+4. Per una copia leggibile, usare l'export Markdown con lo stesso criterio esplicito di sensibilità.
+5. Per portabilità fuori da Supabase conservare insieme: migration Git, export JSON completo autorizzato e, se necessario, un dump SQL/database eseguito con credenziali gestite fuori dal repository.
 
 ## Ripristino
 
 1. Identificare il punto di ripristino e verificare il progetto Supabase di destinazione: deve essere `neacea-master-memory`, mai un altro progetto NEACEA.
 2. Ripristinare prima in un ambiente isolato o in un branch database, quando disponibile, e validare schema, RLS e conteggi.
 3. Per ricostruire lo schema da zero, applicare le migration Git nell'ordine dei timestamp.
-4. Per ricostruire i dati, importare solo un export autorizzato e verificato, preservando `id`, `memory_id`, `version`, fonti e riferimenti di successione.
+4. Per ricostruire i dati, importare solo un export autorizzato e verificato, preservando `id`, `memory_id`, `version`, fonti, Journal, revisioni, classificazioni e riferimenti di successione.
 5. Un ripristino sul progetto principale che sovrascrive dati richiede una conferma esplicita separata.
 
 ## Verifiche dopo un ripristino

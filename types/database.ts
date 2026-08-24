@@ -55,6 +55,21 @@ export const presenceStates = [
 
 export type PresenceState = (typeof presenceStates)[number];
 
+export const journalEntryClassifications = [
+  'EVENT',
+  'DECISION',
+  'PAYMENT',
+  'IDEA',
+  'PROBLEM',
+  'IMPRESSION',
+  'NEXT_ACTION',
+] as const;
+
+export type JournalEntryClassification = (typeof journalEntryClassifications)[number];
+
+export const journalMemoryLinkTypes = ['GENERATED', 'REFERENCED'] as const;
+export type JournalMemoryLinkType = (typeof journalMemoryLinkTypes)[number];
+
 export type JsonObject = Record<string, unknown>;
 
 export interface MemorySourceRow {
@@ -122,5 +137,65 @@ export interface MemorySearchResult {
   source_id: string;
   valid_from: string | null;
   valid_to: string | null;
+  updated_at: string;
+}
+
+export interface JournalEntryRow {
+  id: string;
+  owner_id: string;
+  occurred_at: string;
+  original_text: string;
+  source_id: string;
+  project_reference: string | null;
+  current_revision_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JournalEntryRevisionRow {
+  id: string;
+  journal_entry_id: string;
+  revision: number;
+  supersedes_revision_id: string | null;
+  title: string | null;
+  structured_text: string | null;
+  structured_data: JsonObject;
+  status: Exclude<MemoryStatus, 'SUPERSEDED'>;
+  sensitivity: SensitivityLevel;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JournalRevisionClassificationRow {
+  id: string;
+  journal_entry_revision_id: string;
+  classification: JournalEntryClassification;
+  confidence: number;
+  metadata: JsonObject;
+  created_at: string;
+}
+
+export interface JournalMemoryLinkRow {
+  id: string;
+  journal_entry_id: string;
+  memory_id: string;
+  link_type: JournalMemoryLinkType;
+  created_at: string;
+}
+
+export interface JournalSearchResult {
+  journal_entry_id: string;
+  revision_id: string;
+  revision: number;
+  occurred_at: string;
+  title: string | null;
+  original_text: string;
+  structured_text: string | null;
+  structured_data: JsonObject;
+  status: MemoryStatus;
+  sensitivity: SensitivityLevel;
+  source_id: string;
+  project_reference: string | null;
+  classifications: JournalEntryClassification[];
   updated_at: string;
 }

@@ -34,6 +34,26 @@ Di conseguenza una verifica futura può classificare un'informazione come:
 - Ricerca ed export escludono `HIGHLY_SENSITIVE` per default.
 - Per includerlo occorre invocare intenzionalmente la RPC con `p_include_highly_sensitive = true` da una sessione autenticata proprietaria. Nessun recupero automatico deve impostare quel flag.
 
+## Journal V0.2
+
+Il Journal è il punto di ingresso previsto per contenuti giornalieri, conversazioni o note vocali future:
+
+```text
+Conversazione / voce
+→ Journal Entry (testo originale + fonte)
+→ classificazione e revisione strutturata
+→ eventuale Memory Item collegato
+→ versionamento
+→ export / backup
+```
+
+- `original_text` viene salvato una sola volta e non può essere sovrascritto.
+- Titolo, testo strutturato, dati strutturati, stato e sensibilità vivono in `journal_entry_revisions`; una correzione crea una nuova revisione.
+- Le classificazioni sono multiple e versionate con la revisione: `EVENT`, `DECISION`, `PAYMENT`, `IDEA`, `PROBLEM`, `IMPRESSION`, `NEXT_ACTION`.
+- `project_reference` è un riferimento testuale opzionale: V0.2 non introduce ancora un dominio progetti separato.
+- Una relazione `journal_memory_links` permette di passare in entrambi i sensi tra Journal e Master Memory. Il testo non viene copiato nella memoria.
+- `GENERATED` indica che l'entry ha prodotto una memoria; `REFERENCED` indica un collegamento contestuale.
+
 ## Cancellazione
 
 - In V0.1 non esiste cancellazione automatica o fisica delle memorie.
@@ -42,5 +62,6 @@ Di conseguenza una verifica futura può classificare un'informazione come:
 
 ## Esportazione
 
-- JSON: la RPC `master_memory.export_memory_json` restituisce tutte le versioni, fonte e metadati dell'utente autenticato; il flag per `HIGHLY_SENSITIVE` resta esplicito.
-- Markdown: un esportatore futuro trasformerà il JSON in sezioni per memoria e versione, mantenendo id, stato, sensibilità, provenienza e date. Non sarà introdotto senza una richiesta dedicata.
+- JSON: `master_memory.export_master_memory_json` esporta memory item, versioni, fonti, intake record, Journal, revisioni, classificazioni e relazioni. Il flag per `HIGHLY_SENSITIVE` resta esplicito.
+- Markdown: `master_memory.export_master_memory_markdown` produce una rappresentazione leggibile delle stesse informazioni fondamentali, incluse fonti e relazioni.
+- SQL/database: le migration Git sono lo schema portabile; un dump logico autorizzato del progetto completa l'esportazione dei dati quando sarà richiesto.
