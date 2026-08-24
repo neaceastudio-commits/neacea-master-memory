@@ -9,6 +9,8 @@ Il repository contiene un CLI Node.js minimale per verificare l’accesso autent
 
 ## Configurazione locale
 
+Richiede Node.js 22 o superiore.
+
 Impostare localmente, senza inserirle nel repository:
 
 ```bash
